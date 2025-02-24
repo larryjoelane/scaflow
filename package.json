@@ -1,5 +1,5 @@
 {
-  "name": "templatizer",
+  "name": "scaffold",
   "version": "0.0.1",
   "description": "Scaffold your projects with your own templates",
   "main": "index.js",
