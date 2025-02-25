@@ -1,12 +1,12 @@
-# templatizer
+# scaflow
 Scaffold your projects using your own templates
 
 ## Installation
 
-To install `templatizer`, you can use `npm`:
+To install `scaflow`, you can use `npm`:
 
 ```sh
-npm install -g templatizer
+npm install -g scaflow
 ```
 ## Usage
 
@@ -14,15 +14,15 @@ To create a new project using a template, run:
 
 **Create templates based on your input variables.**
 ```sh
-templatizer --wrap -t <path-to-templates> -y <path-to-folder-with-yaml-files> -o <output-directory-path>
+scaflow --wrap -t <path-to-templates> -y <path-to-folder-with-yaml-files> -o <output-directory-path>
 ```
 **Scaffold new projects based on your templates and input variables.**
 ```sh
-templatizer -t <path-to-templates> -y <path-to-folder-with-yaml-files> -o <output-directory-path>
+scaflow -t <path-to-templates> -y <path-to-folder-with-yaml-files> -o <output-directory-path>
 ```
-**Example input YAML files can be found [here](https://github.com/larryjoelane/templatizer/tree/main/variables.webapp).**
+**Example input YAML files can be found [here](https://github.com/larryjoelane/scaflow/tree/main/variables.webapp).**
 
-**Example templates can be found [here](https://github.com/larryjoelane/templatizer/tree/main/templates/webapp/assets).**
+**Example templates can be found [here](https://github.com/larryjoelane/scaflow/tree/main/templates/webapp/assets).**
 
 
 ## Contributing
