@@ -1,0 +1,7 @@
+.github
+.vscode
+tests
+variables.*
+.gitignore
+coverage
+templates
