@@ -1,13 +1,13 @@
 {
   "name": "scaflow",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Scaffold your projects with your own templates",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "start": "node ./index.js -t ./templates -y data -o output",
     "build": "npm i",
-    "test": "node --test ./tests/",
+    "test": "node --test --inspect ./tests/",
     "test:coverage": "c8 node --test"
   },
   "author": "larrylane",
