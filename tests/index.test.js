@@ -7,14 +7,15 @@ describe('utility.js readYamlFiles(pathToYamlFolder) tests', () => {
   it('should read YAML files', () => {
     const data = utility.readYamlFiles('tests/data');
 
-    assert.deepStrictEqual(data, 
+    assert.deepStrictEqual(data,
       {
         heading: "Hello",
         paragraphText: "This is a web app template",
         title: "Example web app template",
         buttonText: "Click this button",
         alertText: "Hello World",
-        test: "test"
+        test: "test",
+        working_directory: '/home/ubuntu'
       }
     );
   });
@@ -51,7 +52,7 @@ describe('utility.js readYamlFiles(pathToYamlFolder) tests', () => {
         title: "Example web app template",
         buttonText: "Click this button",
         alertText: "Hello World"
-      }, 
+      },
     });
 
     assert.deepStrictEqual(data,
@@ -75,7 +76,7 @@ describe('utility.js readYamlFiles(pathToYamlFolder) tests', () => {
         title: "Example web app template",
         buttonText: "Click this button",
         alertText: "Hello World"
-      }, 
+      },
     });
 
     assert.deepStrictEqual(data,
@@ -88,4 +89,40 @@ describe('utility.js readYamlFiles(pathToYamlFolder) tests', () => {
       }
     );
   });
+
+
+  it('should return all the input directories and files, utility.walkDir(dirPath))', () => {
+    const data = utility.walkDir('templates/mulesoft')
+
+    assert.deepStrictEqual(data,
+
+      {
+        directories: [
+          'templates\mulesoft\temp',
+          'templates\mulesoft\temp2',
+          'templates\mulesoft\temp2\temp2-nested'
+        ],
+        files: [
+          'templates\mulesoft\azure-pipeline copy.yml',
+          'templates\mulesoft\azure-pipeline.yml',
+          'templates\mulesoft\temp\temp.yml',
+          'templates\mulesoft\temp2\temp2-nested\temp2nested.yml',
+          'templates\mulesoft\temp2\temp2.yml'
+        ]
+      }
+    );
+  });
+
+  it('should create a template with variable tokens, utility.wrapKeywords(text, data)', () => {
+    const data = utility.readYamlFiles('tests/data');
+    const input = "New Template! Hello, This is a web app template, Example web app template, Click this button, Hello World, test, home-ubuntu";
+    const output = "New Template! {{heading}}, {{paragraphText}}, {{title}}, {{buttonText}}, {{heading}} World, {{test}}, {{working_directory}}";
+    const template = utility.wrapKeywords(input, data);
+
+    assert.deepStrictEqual(template,
+      output
+    );
+  });
+
+
 });

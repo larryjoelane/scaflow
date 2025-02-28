@@ -2,6 +2,7 @@ import fs from 'fs';
 import yaml from 'js-yaml';
 import nunjucks from 'nunjucks';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 export function wrapKeywords(text, data) {
     for (const [key, value] of Object.entries(data)) {
@@ -37,40 +38,63 @@ export function readYamlFiles(directory) {
     return data;
 }
 
-// todo: refactor this to make it easier to test
-export function renderTemplates(templateDir, templateData, outputDir, createTemplates) {
-    const directory = fs.readdirSync(templateDir);
-    const files = [];
-    const directories = [];
+export function getOutputDirectories(outputDir) {
+    return path.resolve(outputDir);
+}
 
-    directory.forEach(file => {
-        const filePath = path.resolve(templateDir, file);
-        const stat = fs.statSync(filePath);
+export function walkDir(dirPath, fileList = [], dirList = []) {
+    try {
+        const entries = fs.readdirSync(dirPath, { withFileTypes: true });
 
-        if (stat.isDirectory()) {
-            const nestedOutputDir = path.resolve(outputDir, file);
-            directories.push(nestedOutputDir);
-            if (!fs.existsSync(nestedOutputDir)) {
-                fs.mkdirSync(nestedOutputDir, { recursive: true });
+        for (const entry of entries) {
+            const fullPath = path.join(dirPath, entry.name);
+
+            if (entry.isDirectory()) {
+                dirList.push(fullPath);
+                walkDir(fullPath, fileList, dirList); // Recursive call for subdirectories
+            } else if (entry.isFile()) {
+                fileList.push(fullPath);
             }
-            renderTemplates(filePath, templateData, nestedOutputDir, createTemplates);
         }
+    } catch (err) {
+        console.error("Error reading directory:", err);
+    }
 
-        if (stat.isFile()) {
-            files.push(file);
+    return { files: fileList, directories: dirList };
+}
+
+export function renderTemplates(templateDir, templateData, outputDir, createTemplates) {
+
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const currentInputPath = path.join(__dirname, templateDir);
+    const currentOutputPath = getOutputDirectories(outputDir);
+
+    const directories = walkDir(currentInputPath)
+        .directories.map(dir => ({
+            input: dir,
+            output: dir.replace(currentInputPath, currentOutputPath)
+        }));
+    const files = walkDir(currentInputPath)
+        .files.map(file => ({
+            input: file,
+            output: file.replace(currentInputPath, currentOutputPath)
+        }));
+
+    directories.forEach(dir => {
+        if (!fs.existsSync(dir.output)) {
+            fs.mkdirSync(dir.output, { recursive: true });
         }
     });
 
     files.forEach(file => {
         let rendered = null;
-        const filePath = path.resolve(templateDir, file);
-        const outputFilePath = path.resolve(outputDir, file);
-        const content = fs.readFileSync(filePath, 'utf8');
+        const content = fs.readFileSync(file.input, 'utf8');
         if (createTemplates) {
             rendered = wrapKeywords(content, templateData);
         } else {
             rendered = nunjucks.renderString(content, templateData);
         }
-        fs.writeFileSync(outputFilePath, rendered);
+        fs.writeFileSync(file.output, rendered);
     });
 }

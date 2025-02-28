@@ -1,14 +1,14 @@
 {
   "name": "scaflow",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Scaffold your projects with your own templates",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "local-render": "node ./index.js -t ./output/templates/webapp -y ./tests/data -o output/rendered",
-    "local-wrap": "node ./index.js --wrap -t ./templates/webapp -y ./tests/data -o output/templates/webapp",
-    "scf": "scaflow -t ./templates/webapp -y ./tests/data -o output/webapp",
-    "scfw": "scaflow --wrap -t ./templates/webapp -y ./tests/data -o output/templates",
+    "local-render": "node ./index.js -t ./output/templates/mulesoft -y ./template-data -o output/rendered/mulesoft",
+    "local-wrap": "node ./index.js --wrap -t ./templates/mulesoft -y ./template-data -o output/templates/mulesoft",
+    "scf": "scaflow -t ./output/templates/mulesoft -y ./template-data -o output/rendered/mulesoft",
+    "scfw": "scaflow --wrap -t ./templates/mulesoft -y ./template-data -o output/templates/mulesoft",
     "build": "npm i",
     "test": "node --test --inspect ./tests/",
     "test:coverage": "c8 node --test"
