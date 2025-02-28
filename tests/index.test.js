@@ -7,8 +7,8 @@ describe('utility.js readYamlFiles(pathToYamlFolder) tests', () => {
   it('should read YAML files', () => {
     const data = utility.readYamlFiles('tests/data');
 
-    assert.deepStrictEqual(data, {
-      input: {
+    assert.deepStrictEqual(data, 
+      {
         heading: "Hello",
         paragraphText: "This is a web app template",
         title: "Example web app template",
@@ -16,7 +16,7 @@ describe('utility.js readYamlFiles(pathToYamlFolder) tests', () => {
         alertText: "Hello World",
         test: "test"
       }
-    });
+    );
   });
 
   it('should flatten YAML objects one level deep, utility.flattenObject(object)', () => {

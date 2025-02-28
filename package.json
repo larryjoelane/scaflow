@@ -1,11 +1,14 @@
 {
   "name": "scaflow",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Scaffold your projects with your own templates",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node ./index.js -t ./templates -y data -o output",
+    "local-render": "node ./index.js -t ./output/templates/webapp -y ./tests/data -o output/rendered",
+    "local-wrap": "node ./index.js --wrap -t ./templates/webapp -y ./tests/data -o output/templates/webapp",
+    "scf": "scaflow -t ./templates/webapp -y ./tests/data -o output/webapp",
+    "scfw": "scaflow --wrap -t ./templates/webapp -y ./tests/data -o output/templates",
     "build": "npm i",
     "test": "node --test --inspect ./tests/",
     "test:coverage": "c8 node --test"

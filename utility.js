@@ -11,28 +11,7 @@ export function wrapKeywords(text, data) {
     return text;
 }
 
-
-export function createTemplateFiles(templateDir, yamlData, outputDir) {
-    const files = fs.readdirSync(templateDir);
-    files.forEach(file => {
-        const filePath = path.join(templateDir, file);
-        const stat = fs.statSync(filePath);
-        if (stat.isDirectory()) {
-            const nestedOutputDir = path.join(outputDir, file);
-            if (!fs.existsSync(nestedOutputDir)) {
-                fs.mkdirSync(nestedOutputDir, { recursive: true });
-            }
-            createTemplateFiles(filePath, yamlData, nestedOutputDir);
-        } else {
-            const content = fs.readFileSync(filePath, 'utf8');
-            const rendered = wrapKeywords(content, yamlData.input);
-            const outputFilePath = path.join(outputDir, file.replace('template.', ''));
-            fs.writeFileSync(outputFilePath, rendered);
-        }
-    });
-}
-
-export function flattenObject({  prefix = '', objectSeperator = '_', ...ob } = {}) {
+export function flattenObject({ prefix = '', objectSeperator = '_', ...ob } = {}) {
     let result = {};
     for (const i in ob) {
         if (typeof ob[i] === 'object' && ob[i] !== null && !Array.isArray(ob[i])) {
@@ -42,28 +21,27 @@ export function flattenObject({  prefix = '', objectSeperator = '_', ...ob } = {
             result[prefix + i] = ob[i];
         }
     }
-    console.log(JSON.stringify(result));
     return result;
 }
 
 export function readYamlFiles(directory) {
     const files = fs.readdirSync(directory);
-    const data = {};
+    let data = {};
     files.forEach(file => {
         const filePath = path.join(directory, file);
         const content = fs.readFileSync(filePath, 'utf8');
         const yamlData = yaml.load(content);
-        data[path.basename(file, path.extname(file))] = yamlData
-
         const flattenedYamlData = flattenObject(yamlData);
-        data[path.basename(file, path.extname(file))] = flattenedYamlData;
+        data = { ...data, ...flattenedYamlData };
     });
     return data;
 }
 
-export function renderTemplates(templateDir, yamlData, outputDir) {
+// todo: refactor this to make it easier to test
+export function renderTemplates(templateDir, templateData, outputDir, createTemplates) {
     const directory = fs.readdirSync(templateDir);
     const files = [];
+    const directories = [];
 
     directory.forEach(file => {
         const filePath = path.resolve(templateDir, file);
@@ -71,10 +49,11 @@ export function renderTemplates(templateDir, yamlData, outputDir) {
 
         if (stat.isDirectory()) {
             const nestedOutputDir = path.resolve(outputDir, file);
+            directories.push(nestedOutputDir);
             if (!fs.existsSync(nestedOutputDir)) {
                 fs.mkdirSync(nestedOutputDir, { recursive: true });
             }
-            renderTemplates(filePath, yamlData, nestedOutputDir);
+            renderTemplates(filePath, templateData, nestedOutputDir, createTemplates);
         }
 
         if (stat.isFile()) {
@@ -83,12 +62,15 @@ export function renderTemplates(templateDir, yamlData, outputDir) {
     });
 
     files.forEach(file => {
+        let rendered = null;
         const filePath = path.resolve(templateDir, file);
         const outputFilePath = path.resolve(outputDir, file);
         const content = fs.readFileSync(filePath, 'utf8');
-        const rendered = nunjucks.renderString(content, yamlData.input);
+        if (createTemplates) {
+            rendered = wrapKeywords(content, templateData);
+        } else {
+            rendered = nunjucks.renderString(content, templateData);
+        }
         fs.writeFileSync(outputFilePath, rendered);
-        // console.log('test', outputFilePath, rendered);
     });
-
 }
