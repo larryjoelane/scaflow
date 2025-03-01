@@ -12,23 +12,10 @@ import { fileURLToPath } from 'url';
 //     return text;
 // }
 
-export function wrapKeywords(text, data) {
-    for (const [key, value] of Object.entries(data)) {
-        const escapedValue = escapeRegex(value);
-        const regex = new RegExp(`\\b${escapedValue}\\b`, 'g');
-        text = text.replace(regex, `{{${key}}}`);
-    }
-    return text;
-}
 
-
-/* escapes / */
-export function escapeRegexV1(string) {
-    return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
-}
 
 export function escapeRegex(string) {
-    return string.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
+    return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
 export function flattenObject({ prefix = '', objectSeperator = '_', ...ob } = {}) {
@@ -50,7 +37,7 @@ export function readYamlFiles(directory) {
     files.forEach(file => {
         const filePath = path.join(directory, file);
         const content = fs.readFileSync(filePath, 'utf8');
-        const yamlData = yaml.load(escapeRegex(content));
+        const yamlData = yaml.load(content);
         const flattenedYamlData = flattenObject(yamlData);
         data = { ...data, ...flattenedYamlData };
     });
