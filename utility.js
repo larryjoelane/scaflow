@@ -4,14 +4,6 @@ import nunjucks from 'nunjucks';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// export function wrapKeywords(text, data) {
-//     for (const [key, value] of Object.entries(data)) {
-//         const regex = new RegExp(`\\b${value}\\b`, 'g');
-//         text = text.replace(regex, `{{${key}}}`);
-//     }
-//     return text;
-// }
-
 export function wrapKeywords(text, data) {
     for (const [key, value] of Object.entries(data)) {
         const escapedValue = escapeRegex(value);
@@ -19,12 +11,6 @@ export function wrapKeywords(text, data) {
         text = text.replace(regex, `{{${key}}}`);
     }
     return text;
-}
-
-
-/* escapes / */
-export function escapeRegexV1(string) {
-    return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
 export function escapeRegex(string) {

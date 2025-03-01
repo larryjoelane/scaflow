@@ -15,7 +15,7 @@ describe('utility.js readYamlFiles(pathToYamlFolder) tests', () => {
         buttonText: "Click this button",
         alertText: "Hello World",
         test: "test",
-        working_directory: 'home\\ubuntu'
+        working_directory: "home\\\\ubuntu"
       }
     );
   });
@@ -114,8 +114,8 @@ describe('utility.js readYamlFiles(pathToYamlFolder) tests', () => {
 
   it('should create a template with variable tokens, utility.wrapKeywords(text, data)', () => {
     const data = utility.readYamlFiles('tests/data');
-    const input = "Hello, This is a web app template, Example web app template, Click this button, Hello World, test, home\\ubuntu";
-    const output = "{{heading}}, {{paragraphText}}, {{title}}, {{buttonText}}, {{heading}} World, {{test}}, {{working_directory}}, home\\ubuntu";
+    const input = "test Hello, This is a web app template, Example web app template, Click this button, Hello World, test, home\\\\ubuntu";
+    const output = "{{test}} {{heading}}, {{paragraphText}}, {{title}}, {{buttonText}}, {{heading}} World, {{test}}, {{working_directory}}";
     const template = utility.wrapKeywords(input, data);
 
     assert.deepStrictEqual(template,
