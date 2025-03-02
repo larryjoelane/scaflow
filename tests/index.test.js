@@ -1,6 +1,7 @@
 import { test, describe, it } from 'node:test';
 import assert from 'node:assert';
 import * as utility from '../utility.js';
+import os from 'node:os';
 
 describe('utility.js readYamlFiles(pathToYamlFolder) tests', () => {
 
@@ -94,21 +95,31 @@ describe('utility.js readYamlFiles(pathToYamlFolder) tests', () => {
   it('should return all the input directories and files, utility.walkDir(dirPath))', () => {
     const data = utility.walkDir('templates/mulesoft')
 
+    const osType = os.type();
+
+    // windows
+    const paths = {
+      directories: [
+        'templates\\mulesoft\\temp',
+        'templates\\mulesoft\\temp2',
+        'templates\\mulesoft\\temp2\\temp2-nested'
+      ],
+      files: [
+        'templates\\mulesoft\\azure-pipeline copy.yml',
+        'templates\\mulesoft\\azure-pipeline.yml',
+        'templates\\mulesoft\\temp\\temp.yml',
+        'templates\\mulesoft\\temp2\\temp2-nested\\temp2nested.yml',
+        'templates\\mulesoft\\temp2\\temp2.yml'
+      ]
+    }
+
+    if (osType === 'Linux') {
+      paths.directories = paths.directories.map(dir => dir.replace(/\\/g, '/'));
+      paths.files = paths.files.map(file => file.replace(/\\/g, '/'));
+    }
+
     assert.deepStrictEqual(data,
-      {
-        directories: [
-          'templates\\mulesoft\\temp',
-          'templates\\mulesoft\\temp2',
-          'templates\\mulesoft\\temp2\\temp2-nested'
-        ],
-        files: [
-          'templates\\mulesoft\\azure-pipeline copy.yml',
-          'templates\\mulesoft\\azure-pipeline.yml',
-          'templates\\mulesoft\\temp\\temp.yml',
-          'templates\\mulesoft\\temp2\\temp2-nested\\temp2nested.yml',
-          'templates\\mulesoft\\temp2\\temp2.yml'
-        ]
-      }
+      paths
     );
   });
 
