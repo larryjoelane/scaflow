@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import {  readYamlFiles, renderTemplates } from './utility.js';
+import { readYamlFiles, renderTemplates, generateDirectoryStructure } from './utility.js';
 
 const program = new Command();
 program.option('-w, --wrap', 'wrap keywords in the output files');
@@ -15,7 +15,17 @@ program.parse(process.argv);
 
 const options = program.opts();
 
-const yamlData = readYamlFiles(options.yaml);
+let yamlData = {};
+
+if (options.wrap) {
+    yamlData = readYamlFiles(options.yaml, true);
+} else {
+    yamlData = readYamlFiles(options.yaml, false);
+}
+
+const currentDirectory = process.cwd();
+console.log(currentDirectory);
+process.chdir(currentDirectory);
 
 if (options.wrap) {
     renderTemplates(options.templates, yamlData, options.output, true);

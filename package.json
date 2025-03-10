@@ -5,10 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "local-render": "node ./index.js -t ./output/templates/mulesoft -y ./template-data -o output/rendered/mulesoft",
-    "local-wrap": "node ./index.js --wrap -t ./templates/mulesoft -y ./template-data -o output/templates/mulesoft",
-    "scf": "scaflow -t ./output/templates/mulesoft -y ./template-data -o output/rendered/mulesoft",
-    "scfw": "scaflow --wrap -t ./templates/mulesoft -y ./template-data -o output/templates/mulesoft",
+    "local-render": "node ./index.js -t ./output/templates/mulesoft -y ./template-data -o output",
+    "local-wrap": "",
+    "scf": "scaflow -t ./output/templates/mulesoft -y ./template-data -o output/rendered",
+    "scfw": "scaflow --wrap -t ./templates/mulesoft -y ./template-data -o ./output/templates/mulesoft",
     "build": "npm i",
     "test": "node --test --inspect ./tests/",
     "test:coverage": "c8 node --test"
@@ -28,5 +28,5 @@
   },
   "bin": {
     "scaflow": "./index.js"
-  } 
+  }
 }

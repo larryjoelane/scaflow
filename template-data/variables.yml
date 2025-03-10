@@ -1,2 +1,3 @@
-working_directory: "home\\ubuntu"
+working_directory: "home\ubuntu"
+something: "This is somet\hing"
 test: "This is a test"

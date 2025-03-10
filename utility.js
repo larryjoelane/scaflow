@@ -2,7 +2,7 @@ import fs from 'fs';
 import yaml from 'js-yaml';
 import nunjucks from 'nunjucks';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import os from 'os';
 
 export function wrapKeywords(text, data) {
     for (const [key, value] of Object.entries(data)) {
@@ -30,13 +30,17 @@ export function flattenObject({ prefix = '', objectSeperator = '_', ...ob } = {}
     return result;
 }
 
-export function readYamlFiles(directory) {
+export function readYamlFiles(directory, canEscapeRegex) {
     const files = fs.readdirSync(directory);
+    let yamlData = {};
     let data = {};
     files.forEach(file => {
         const filePath = path.join(directory, file);
-        const content = fs.readFileSync(filePath, 'utf8');
-        const yamlData = yaml.load(escapeRegex(content));
+        let content = fs.readFileSync(filePath, 'utf8');
+        let escapeContent = content.replaceAll("\\", "\\\\");
+
+        yamlData = yaml.load(escapeContent);
+
         const flattenedYamlData = flattenObject(yamlData);
         data = { ...data, ...flattenedYamlData };
     });
@@ -47,59 +51,78 @@ export function getOutputDirectories(outputDir) {
     return path.resolve(outputDir);
 }
 
-export function walkDir(dirPath, fileList = [], dirList = []) {
-    try {
-        const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+export function generateDirectoryStructure(inputDir, outputDir) {
+    const structure = { directories: [] };
+
+    function walkDirectory(currentInputDir, currentOutputDir) {
+        const entries = fs.readdirSync(currentInputDir, { withFileTypes: true });
+        const directory = { source: currentInputDir, dest: currentOutputDir, files: [] };
 
         for (const entry of entries) {
-            const fullPath = path.join(dirPath, entry.name);
+            const inputPath = path.join(currentInputDir, entry.name);
+            const outputPath = path.join(currentOutputDir, entry.name);
 
             if (entry.isDirectory()) {
-                dirList.push(fullPath);
-                walkDir(fullPath, fileList, dirList); // Recursive call for subdirectories
+                walkDirectory(inputPath, outputPath);
             } else if (entry.isFile()) {
-                fileList.push(fullPath);
+                directory.files.push({ source: inputPath, dest: outputPath });
             }
         }
-    } catch (err) {
-        console.error("Error reading directory:", err);
+
+        structure.directories.push(directory);
     }
 
-    return { files: fileList, directories: dirList };
+    walkDirectory(inputDir, outputDir);
+    return structure;
 }
+
 
 export function renderTemplates(templateDir, templateData, outputDir, createTemplates) {
 
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    const currentInputPath = path.join(__dirname, templateDir);
-    const currentOutputPath = getOutputDirectories(outputDir);
+    const plaftform = os.platform();
 
-    const directories = walkDir(currentInputPath)
-        .directories.map(dir => ({
-            input: dir,
-            output: dir.replace(currentInputPath, currentOutputPath)
-        }));
-    const files = walkDir(currentInputPath)
-        .files.map(file => ({
-            input: file,
-            output: file.replace(currentInputPath, currentOutputPath)
-        }));
+    let pathSeparator = '';
+
+    if (plaftform === 'win32') {
+        pathSeparator = '\\';
+    } else {
+        pathSeparator = '/';
+    }
+
+    const cleanTemplateData = modifyObjectValues(templateData, excapeBackSlash);
+    const directories = generateDirectoryStructure(templateDir, outputDir).directories;
 
     directories.forEach(dir => {
-        if (!fs.existsSync(dir.output)) {
-            fs.mkdirSync(dir.output, { recursive: true });
+        if (!fs.existsSync(dir.dest)) {
+            fs.mkdirSync(dir.dest, { recursive: true });
         }
-    });
 
-    files.forEach(file => {
-        let rendered = null;
-        const content = fs.readFileSync(file.input, 'utf8');
-        if (createTemplates) {
-            rendered = wrapKeywords(content, templateData);
-        } else {
-            rendered = nunjucks.renderString(content, templateData);
-        }
-        fs.writeFileSync(file.output, rendered);
+        dir.files.forEach(file => {
+            let rendered = null;
+            const content = fs.readFileSync(file.source, 'utf8');
+            if (createTemplates) {
+                rendered = wrapKeywords(content, cleanTemplateData);
+            } else {
+                rendered = nunjucks.renderString(content, cleanTemplateData);
+            }
+            fs.writeFileSync(file.dest, unencodeBackSlash(rendered));
+        });
     });
+}
+
+function modifyObjectValues(obj, modificationFunction) {
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            obj[key] = modificationFunction(obj[key]);
+        }
+    }
+    return obj;
+}
+
+function excapeBackSlash(value) {
+    return value.replaceAll("\\", "\\\\");
+}
+
+function unencodeBackSlash(value) {
+    return value.replaceAll("&#92;", "\\");
 }
