@@ -2,6 +2,7 @@ import { test, describe, it } from 'node:test';
 import assert from 'node:assert';
 import * as utility from '../utility.js';
 import os from 'node:os';
+import fs from 'node:fs';
 
 describe('utility.js readYamlFiles(pathToYamlFolder) tests', () => {
 
@@ -92,26 +93,49 @@ describe('utility.js readYamlFiles(pathToYamlFolder) tests', () => {
   });
 
 
-  it('should return all the input directories and files, utility.walkDir(dirPath))', () => {
-    const data = utility.walkDir('templates/mulesoft')
+  it('should return all the input directories and files, generateDirectoryStructure(inputDir, outputDir))', () => {
+    const data = utility.generateDirectoryStructure('templates/mulesoft', 'templates/mulesoft');
+    console.log(JSON.stringify(data, null, 2));
+
+    fs.writeFileSync('tests/data.json', JSON.stringify(data, null, 2));
 
     const osType = os.type();
 
     // windows
     const paths = {
-      directories: [
-        'templates\\mulesoft\\temp',
-        'templates\\mulesoft\\temp2',
-        'templates\\mulesoft\\temp2\\temp2-nested'
-      ],
-      files: [
-        'templates\\mulesoft\\azure-pipeline copy.yml',
-        'templates\\mulesoft\\azure-pipeline.yml',
-        'templates\\mulesoft\\temp\\temp.yml',
-        'templates\\mulesoft\\temp2\\temp2-nested\\temp2nested.yml',
-        'templates\\mulesoft\\temp2\\temp2.yml'
+      "directories": [
+        {
+          "source": "templates\\mulesoft\\test\\test-nested",
+          "dest": "templates\\mulesoft\\test\\test-nested",
+          "files": [
+            {
+              "source": "templates\\mulesoft\\test\\test-nested\\index2.yml",
+              "dest": "templates\\mulesoft\\test\\test-nested\\index2.yml"
+            }
+          ]
+        },
+        {
+          "source": "templates\\mulesoft\\test",
+          "dest": "templates\\mulesoft\\test",
+          "files": [
+            {
+              "source": "templates\\mulesoft\\test\\index.yml",
+              "dest": "templates\\mulesoft\\test\\index.yml"
+            }
+          ]
+        },
+        {
+          "source": "templates/mulesoft",
+          "dest": "templates/mulesoft",
+          "files": [
+            {
+              "source": "templates\\mulesoft\\test.yml",
+              "dest": "templates\\mulesoft\\test.yml"
+            }
+          ]
+        }
       ]
-    }
+    };
 
     if (osType === 'Linux') {
       paths.directories = paths.directories.map(dir => dir.replace(/\\/g, '/'));
