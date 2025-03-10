@@ -1,0 +1,34 @@
+{
+  "directories": [
+    {
+      "source": "templates\\mulesoft\\test\\test-nested",
+      "dest": "templates\\mulesoft\\test\\test-nested",
+      "files": [
+        {
+          "source": "templates\\mulesoft\\test\\test-nested\\index2.yml",
+          "dest": "templates\\mulesoft\\test\\test-nested\\index2.yml"
+        }
+      ]
+    },
+    {
+      "source": "templates\\mulesoft\\test",
+      "dest": "templates\\mulesoft\\test",
+      "files": [
+        {
+          "source": "templates\\mulesoft\\test\\index.yml",
+          "dest": "templates\\mulesoft\\test\\index.yml"
+        }
+      ]
+    },
+    {
+      "source": "templates/mulesoft",
+      "dest": "templates/mulesoft",
+      "files": [
+        {
+          "source": "templates\\mulesoft\\test.yml",
+          "dest": "templates\\mulesoft\\test.yml"
+        }
+      ]
+    }
+  ]
+}
