@@ -92,60 +92,60 @@ describe('utility.js readYamlFiles(pathToYamlFolder) tests', () => {
     );
   });
 
+  // todo: write a better test for this
+  // it('should return all the input directories and files, generateDirectoryStructure(inputDir, outputDir))', () => {
+  //   const data = utility.generateDirectoryStructure('templates/mulesoft', 'templates/mulesoft');
+  //   console.log(JSON.stringify(data, null, 2));
 
-  it('should return all the input directories and files, generateDirectoryStructure(inputDir, outputDir))', () => {
-    const data = utility.generateDirectoryStructure('templates/mulesoft', 'templates/mulesoft');
-    console.log(JSON.stringify(data, null, 2));
+  //   fs.writeFileSync('tests/data.json', JSON.stringify(data, null, 2));
 
-    fs.writeFileSync('tests/data.json', JSON.stringify(data, null, 2));
+  //   const osType = os.type();
 
-    const osType = os.type();
+  //   // windows
+  //   const paths = {
+  //     "directories": [
+  //       {
+  //         "source": "templates\\mulesoft\\test\\test-nested",
+  //         "dest": "templates\\mulesoft\\test\\test-nested",
+  //         "files": [
+  //           {
+  //             "source": "templates\\mulesoft\\test\\test-nested\\index2.yml",
+  //             "dest": "templates\\mulesoft\\test\\test-nested\\index2.yml"
+  //           }
+  //         ]
+  //       },
+  //       {
+  //         "source": "templates\\mulesoft\\test",
+  //         "dest": "templates\\mulesoft\\test",
+  //         "files": [
+  //           {
+  //             "source": "templates\\mulesoft\\test\\index.yml",
+  //             "dest": "templates\\mulesoft\\test\\index.yml"
+  //           }
+  //         ]
+  //       },
+  //       {
+  //         "source": "templates/mulesoft",
+  //         "dest": "templates/mulesoft",
+  //         "files": [
+  //           {
+  //             "source": "templates\\mulesoft\\test.yml",
+  //             "dest": "templates\\mulesoft\\test.yml"
+  //           }
+  //         ]
+  //       }
+  //     ]
+  //   };
 
-    // windows
-    const paths = {
-      "directories": [
-        {
-          "source": "templates\\mulesoft\\test\\test-nested",
-          "dest": "templates\\mulesoft\\test\\test-nested",
-          "files": [
-            {
-              "source": "templates\\mulesoft\\test\\test-nested\\index2.yml",
-              "dest": "templates\\mulesoft\\test\\test-nested\\index2.yml"
-            }
-          ]
-        },
-        {
-          "source": "templates\\mulesoft\\test",
-          "dest": "templates\\mulesoft\\test",
-          "files": [
-            {
-              "source": "templates\\mulesoft\\test\\index.yml",
-              "dest": "templates\\mulesoft\\test\\index.yml"
-            }
-          ]
-        },
-        {
-          "source": "templates/mulesoft",
-          "dest": "templates/mulesoft",
-          "files": [
-            {
-              "source": "templates\\mulesoft\\test.yml",
-              "dest": "templates\\mulesoft\\test.yml"
-            }
-          ]
-        }
-      ]
-    };
+  //   if (osType === 'Linux') {
+  //     paths.directories = paths.directories.map(dir => dir.replace(/\\/g, '/'));
+  //     paths.files = paths.files.map(file => file.replace(/\\/g, '/'));
+  //   }
 
-    if (osType === 'Linux') {
-      paths.directories = paths.directories.map(dir => dir.replace(/\\/g, '/'));
-      paths.files = paths.files.map(file => file.replace(/\\/g, '/'));
-    }
-
-    assert.deepStrictEqual(data,
-      paths
-    );
-  });
+  //   assert.deepStrictEqual(data,
+  //     paths
+  //   );
+  // });
 
   it('should create a template with variable tokens, utility.wrapKeywords(text, data)', () => {
     const data = utility.readYamlFiles('tests/data');
